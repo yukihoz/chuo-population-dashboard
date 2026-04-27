@@ -143,6 +143,7 @@ function initControls() {
     button.addEventListener("click", () => {
       state.agePopulation = button.dataset.agePopulation;
       syncAgePopulationButtons();
+      renderSelectionPopup();
       renderAgeChart();
     });
   });
@@ -167,6 +168,7 @@ function initControls() {
     renderKpis();
     renderTrend();
     renderRanking();
+    renderSelectionPopup();
     syncAgeControls();
     renderAgeChart();
   });
@@ -178,6 +180,7 @@ function initControls() {
     renderKpis();
     renderTrend();
     renderRanking();
+    renderSelectionPopup();
     syncAgeControls();
     renderAgeChart();
   });
@@ -722,11 +725,25 @@ function compact(value) {
   return fmt.format(Math.round(value));
 }
 
+function renderSelectionPopup() {
+  const popup = $("selectionPopup");
+  popup.innerHTML = `
+    <h2>表示条件</h2>
+    <dl>
+      <dt>指標</dt><dd>${metrics[state.metric].label}</dd>
+      <dt>人口区分</dt><dd>${agePopulationTypes[state.agePopulation].label}</dd>
+      <dt>地域</dt><dd title="${state.area}">${state.area}</dd>
+      <dt>期間</dt><dd>${formatDate(state.startDate)} - ${formatDate(state.endDate)}</dd>
+    </dl>
+  `;
+}
+
 function render() {
   renderKpis();
   renderTrend();
   renderRanking();
   renderAgeChart();
+  renderSelectionPopup();
 }
 
 async function boot() {

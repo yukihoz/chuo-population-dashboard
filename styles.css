@@ -28,7 +28,7 @@ body {
 .app {
   width: min(1440px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 0 0 40px;
+  padding: 0 0 116px;
 }
 
 .topbar {
@@ -40,8 +40,9 @@ body {
   align-items: end;
   justify-content: space-between;
   gap: 24px;
-  margin: 0 -20px 24px;
-  padding: 18px 20px 16px;
+  width: 100vw;
+  margin: 0 calc(50% - 50vw) 24px;
+  padding: 18px max(20px, calc((100vw - 1440px) / 2 + 20px)) 16px;
   border: 1px solid #e6d27a;
   border-top: 0;
   border-radius: 0 0 10px 10px;
@@ -66,8 +67,9 @@ p {
 }
 
 h1 {
-  font-size: 32px;
+  font-size: clamp(30px, 4.2vw, 44px);
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 h2 {
@@ -86,6 +88,50 @@ h2 {
   color: var(--accent-strong);
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.selection-popup {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 25;
+  width: min(300px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 14px 34px rgba(80, 67, 18, 0.16);
+  padding: 10px 12px;
+  color: var(--ink);
+  font-size: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.selection-popup h2 {
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.selection-popup dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 10px;
+  margin: 0;
+}
+
+.selection-popup dt {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.selection-popup dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
 }
 
 a {
@@ -418,15 +464,15 @@ input[type="search"] {
 }
 
 .site-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   margin-top: 24px;
   padding: 18px 4px 0;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
+  text-align: center;
 }
 
 .legend span {
@@ -668,13 +714,14 @@ svg {
 @media (max-width: 900px) {
   .app {
     width: min(100% - 24px, 720px);
-    padding-top: 18px;
   }
 
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
     gap: 12px;
+    padding-top: 16px;
+    padding-bottom: 14px;
   }
 
   .source-note {
@@ -727,6 +774,26 @@ svg {
   }
 
   h1 {
-    font-size: 26px;
+    font-size: clamp(25px, 6.7vw, 34px);
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .source-note {
+    justify-self: end;
+  }
+
+  h1 {
+    font-size: clamp(25px, 7.2vw, 31px);
+  }
+
+  .selection-popup {
+    right: 12px;
+    bottom: 12px;
+    width: min(290px, calc(100vw - 24px));
   }
 }
