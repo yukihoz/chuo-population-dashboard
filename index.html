@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>中央区人口ダッシュボード</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Chuo City Population</p>
+          <h1>中央区人口ダッシュボード</h1>
+        </div>
+        <div class="source-note">
+          <span id="dateRange">読み込み中</span>
+        </div>
+      </header>
+      <section class="controls" aria-label="表示条件">
+        <fieldset class="metric-buttons">
+          <legend>指標</legend>
+          <button type="button" data-metric="total" class="active">人口</button>
+          <button type="button" data-metric="households">世帯数</button>
+          <button type="button" data-metric="peoplePerHousehold">1世帯あたり人数</button>
+        </fieldset>
+        <fieldset class="age-population-field">
+          <legend>人口区分</legend>
+          <div class="age-population-toggle" aria-label="年齢人口区分">
+            <button type="button" data-age-population="total" class="active">総数</button>
+            <button type="button" data-age-population="japanese">日本人</button>
+            <button type="button" data-age-population="foreign">外国人</button>
+          </div>
+        </fieldset>
+        <label class="legacy-metric">
+          指標
+          <select id="metricSelect">
+            <option value="total">人口</option>
+            <option value="households">世帯数</option>
+            <option value="male">男性人口</option>
+            <option value="female">女性人口</option>
+            <option value="peoplePerHousehold">1世帯あたり人数</option>
+          </select>
+        </label>
+        <label>
+          地域
+          <select id="areaSelect"></select>
+        </label>
+        <div class="compare-builder">
+          <label for="compareSearch">比較</label>
+          <div class="search-row">
+            <input id="compareSearch" type="search" autocomplete="off" placeholder="町丁目を検索">
+            <button id="compareAdd" type="button">追加</button>
+          </div>
+          <div class="suggestions" id="compareSuggestions"></div>
+          <div class="compare-chips" id="compareChips"></div>
+        </div>
+        <fieldset class="period-filter">
+          <legend>期間</legend>
+          <label>
+            開始
+            <select id="startDateSelect"></select>
+          </label>
+          <label>
+            終了
+            <select id="endDateSelect"></select>
+          </label>
+        </fieldset>
+      </section>
+
+      <section class="kpis" aria-label="主要指標">
+        <article>
+          <span>選択エリアの人口</span>
+          <strong id="latestTotal">-</strong>
+        </article>
+        <article>
+          <span>選択エリアの世帯数</span>
+          <strong id="latestHouseholds">-</strong>
+        </article>
+        <article>
+          <span>1世帯あたり人数</span>
+          <strong id="latestPeoplePerHousehold">-</strong>
+        </article>
+      </section>
+
+      <section class="layout">
+        <article class="panel wide">
+          <div class="panel-head">
+            <h2 id="trendTitle">推移</h2>
+            <div class="trend-tools">
+              <div class="scale-toggle" aria-label="比較スケール">
+                <button type="button" data-scale="absolute" class="active">実数</button>
+                <button type="button" data-scale="index">指数</button>
+              </div>
+              <label class="base-date-control">
+                基準
+                <select id="baseDateSelect"></select>
+              </label>
+              <div class="legend" id="trendLegend"></div>
+            </div>
+          </div>
+          <div class="timeline">
+            <button id="trendPlay" type="button">再生</button>
+            <input id="trendSlider" type="range" min="0" max="0" value="0">
+            <strong id="trendDateLabel">-</strong>
+          </div>
+          <div class="readout" id="trendReadout"></div>
+          <div class="chart-wrap">
+            <svg id="trendChart" role="img" aria-label="人口推移グラフ"></svg>
+          </div>
+        </article>
+
+        <article class="panel age-panel">
+          <div class="panel-head">
+            <h2>年齢3区分の推移</h2>
+            <div class="trend-tools">
+              <div class="scale-toggle" aria-label="年齢3区分スケール">
+                <button type="button" data-scale="absolute" class="active">実数</button>
+                <button type="button" data-scale="index">指数</button>
+              </div>
+              <label class="base-date-control">
+                基準
+                <select id="ageBaseDateSelect"></select>
+              </label>
+            </div>
+          </div>
+          <div class="timeline">
+            <button id="agePlay" type="button">再生</button>
+            <input id="ageSlider" type="range" min="0" max="0" value="0">
+            <strong id="ageDateLabel">-</strong>
+          </div>
+          <div class="readout" id="ageReadout"></div>
+          <div class="chart-wrap">
+            <svg id="ageChart" role="img" aria-label="年齢3区分推移グラフ"></svg>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h2>町別ランキング</h2>
+            <div class="rank-buttons" aria-label="ランキング種別">
+              <button type="button" data-rank-mode="increase" class="active">増加数</button>
+              <button type="button" data-rank-mode="decrease">減少数</button>
+              <button type="button" data-rank-mode="increaseRate">増加率</button>
+              <button type="button" data-rank-mode="decreaseRate">減少率</button>
+            </div>
+          </div>
+          <ol class="ranking" id="ranking"></ol>
+        </article>
+      </section>
+      <footer class="site-footer">
+        <p>このサイトは、ほづみゆうきが作成しました。</p>
+        <a class="source-link" href="https://www.city.chuo.lg.jp/kusei/gaiyou/toukeidate/jinkou/index.html">情報参照元：中央区webサイト</a>
+      </footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
