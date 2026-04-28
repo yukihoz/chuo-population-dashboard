@@ -553,7 +553,7 @@ function renderTrendReadout(series, date) {
     const rawLabel = rawPoint && state.scale === "index" ? ` (${formatValue(rawPoint.value)})` : "";
     return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
   });
-  $("trendReadout").innerHTML = [`<span>${formatDate(date)}</span>`, ...chips].join("");
+  $("trendReadout").innerHTML = chips.join("");
 }
 
 function toIndexValues(values, baseDate) {
@@ -751,7 +751,7 @@ function renderAgeReadout(series, date) {
     const rawLabel = rawPoint && state.scale === "index" ? ` (${formatValue(rawPoint.value, "total")})` : "";
     return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
   });
-  $("ageReadout").innerHTML = [`<span>${formatDate(date)}</span>`, ...chips].join("");
+  $("ageReadout").innerHTML = chips.join("");
 }
 
 function line(svg, x1, y1, x2, y2, className) {

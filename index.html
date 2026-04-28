@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0" rel="stylesheet">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=20260428g">
+    <link rel="stylesheet" href="styles.css?v=20260428h">
   </head>
   <body>
     <main class="app">
@@ -69,15 +69,6 @@
           地域
           <select id="areaSelect"></select>
         </label>
-        <div class="compare-builder">
-          <label for="compareSearch">比較</label>
-          <div class="search-row">
-            <input id="compareSearch" type="search" autocomplete="off" placeholder="町丁目を検索">
-            <button id="compareAdd" type="button">追加</button>
-          </div>
-          <div class="suggestions" id="compareSuggestions"></div>
-          <div class="compare-chips" id="compareChips"></div>
-        </div>
         <fieldset class="period-filter">
           <legend>期間</legend>
           <label>
@@ -134,6 +125,15 @@
           <div class="chart-wrap">
             <svg id="trendChart" role="img" aria-label="人口推移グラフ"></svg>
           </div>
+          <div class="compare-builder">
+            <label for="compareSearch">比較</label>
+            <div class="search-row">
+              <input id="compareSearch" type="search" autocomplete="off" placeholder="町丁目を検索">
+              <button id="compareAdd" type="button">追加</button>
+            </div>
+            <div class="suggestions" id="compareSuggestions"></div>
+            <div class="compare-chips" id="compareChips"></div>
+          </div>
         </article>
 
         <article class="panel age-panel" id="age">
@@ -180,6 +180,6 @@
         <a class="source-link" href="https://www.city.chuo.lg.jp/kusei/gaiyou/toukeidate/jinkou/index.html">情報参照元：中央区webサイト</a>
       </footer>
     </main>
-    <script src="app.js?v=20260428g"></script>
+    <script src="app.js?v=20260428h"></script>
   </body>
 </html>

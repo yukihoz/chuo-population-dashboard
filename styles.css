@@ -455,10 +455,9 @@ input[type="search"] {
   gap: 10px;
   align-content: start;
   position: relative;
-  grid-column: 1 / -1;
-  order: 2;
   width: min(100%, 860px);
   max-width: 860px;
+  margin-top: 18px;
 }
 
 .compare-builder > label {
@@ -807,6 +806,10 @@ input[type="search"] {
   margin-bottom: 10px;
 }
 
+.timeline input[type="range"] {
+  min-width: 0;
+}
+
 .timeline.compact {
   width: min(760px, 100%);
   margin-bottom: 0;
@@ -989,7 +992,9 @@ svg {
   border-radius: 999px;
   background: #fff;
   color: var(--ink);
-  padding: 0 18px;
+  min-width: 74px;
+  padding: 0 12px;
+  white-space: nowrap;
 }
 
 .rank-buttons button.active {
@@ -1183,9 +1188,17 @@ svg {
     flex-direction: column;
   }
 
-  .timeline,
+  .timeline {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
   .timeline.compact {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .timeline strong {
+    grid-column: 1 / -1;
+    justify-self: end;
   }
 
   .ranking li {
@@ -1243,5 +1256,14 @@ svg {
   .age-population-toggle button {
     min-height: 40px;
     padding-inline: 14px;
+  }
+
+  .rank-buttons {
+    gap: 6px;
+  }
+
+  .rank-buttons button {
+    min-width: 68px;
+    padding-inline: 10px;
   }
 }
