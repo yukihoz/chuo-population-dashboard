@@ -185,6 +185,10 @@ body::before {
   background: var(--accent);
 }
 
+.side-nav a.active {
+  font-weight: 700;
+}
+
 .side-note {
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -348,6 +352,7 @@ legend {
   border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-contrast);
+  font-weight: 700;
 }
 
 .age-population-field {
@@ -382,6 +387,7 @@ legend {
 .area-chips button.active {
   border-color: var(--accent);
   background: var(--accent);
+  font-weight: 700;
 }
 
 label {
@@ -684,6 +690,7 @@ input[type="search"] {
 .age-population-toggle button.active {
   background: var(--accent);
   color: var(--accent-contrast);
+  font-weight: 700;
 }
 
 .base-date-control {
@@ -969,6 +976,7 @@ svg {
   border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-contrast);
+  font-weight: 700;
 }
 
 .ranking li {
@@ -1003,7 +1011,7 @@ svg {
 }
 
 .rank-name {
-  font-weight: 800;
+  font-weight: 400;
 }
 
 .rank-bar {
@@ -1031,6 +1039,7 @@ svg {
   .app {
     width: min(100% - 24px, 720px);
     display: block;
+    margin-inline: auto;
     padding: 0 0 116px;
   }
 
@@ -1043,10 +1052,10 @@ svg {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
-    margin: 12px 0;
+    margin: 10px 0 14px;
     border: 1px solid var(--line);
     border-radius: 24px;
-    padding: 14px;
+    padding: 10px 14px;
   }
 
   .side-note {
@@ -1060,6 +1069,7 @@ svg {
     gap: 10px;
     text-align: left;
     font-size: 13px;
+    line-height: 1.25;
   }
 
   .brand-mark {
@@ -1076,9 +1086,11 @@ svg {
     min-height: 40px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     justify-self: end;
     padding-inline: 12px;
+    line-height: 1;
   }
 
   .nav-toggle .material-symbols-rounded {
