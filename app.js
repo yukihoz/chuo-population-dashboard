@@ -542,6 +542,9 @@ function drawLineChart(svg, series, activeIndex) {
     text(svg, x(dates[index]) - 24, height - 12, formatDate(dates[index]), "tick");
   }
 
+  const markerX = x(activeDate);
+  line(svg, markerX, margin.top, markerX, margin.top + innerH, "marker-line");
+
   for (const item of series) {
     const visibleValues = item.values.filter((d) => dates.indexOf(d.date) <= safeIndex);
     const path = visibleValues.map((d, index) => `${index ? "L" : "M"}${x(d.date)},${y(d.value)}`).join(" ");
@@ -552,12 +555,10 @@ function drawLineChart(svg, series, activeIndex) {
     svg.append(el);
     const activePoint = item.values.find((d) => d.date === activeDate);
     if (activePoint) {
-      circle(svg, x(activeDate), y(activePoint.value), 4.8, item.color, "marker-dot");
+      circle(svg, x(activeDate), y(activePoint.value), 8, item.color, "marker-dot");
     }
   }
 
-  const markerX = x(activeDate);
-  line(svg, markerX, margin.top, markerX, margin.top + innerH, "marker-line");
   const hit = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   hit.setAttribute("x", margin.left);
   hit.setAttribute("y", margin.top);
@@ -707,7 +708,10 @@ function circle(svg, cx, cy, r, fill, className) {
   el.setAttribute("cx", cx);
   el.setAttribute("cy", cy);
   el.setAttribute("r", r);
-  el.setAttribute("fill", fill);
+  el.setAttribute("fill", className === "marker-dot" ? "#fff" : fill);
+  if (className === "marker-dot") {
+    el.setAttribute("stroke", fill);
+  }
   el.setAttribute("class", className);
   svg.append(el);
 }

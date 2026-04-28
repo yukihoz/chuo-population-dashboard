@@ -13,8 +13,8 @@
     <main class="app">
       <aside class="sidebar" aria-label="ナビゲーション">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true"><span class="material-symbols-rounded icon-blue">location_city</span></div>
-          <strong>Chuo City<br>Population</strong>
+          <div class="brand-mark" aria-hidden="true"><span class="material-symbols-rounded">bar_chart</span></div>
+          <strong>中央区人口<br>ダッシュボード</strong>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="sideNav">
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
@@ -36,44 +36,8 @@
         </div>
       </aside>
 
-      <header class="topbar" id="overview">
-        <div class="hero-copy">
-          <p class="eyebrow">Chuo City Population</p>
-          <h1>中央区人口ダッシュボード</h1>
-          <p class="hero-lead">まちの今を、グラフでたのしく見てみよう！</p>
-        </div>
-        <div class="hero-meta">
-          <span>データ期間：<strong id="dateRange">読み込み中</strong></span>
-        </div>
-        <div class="hero-art" aria-hidden="true">
-          <svg viewBox="0 0 520 180" role="img">
-            <path d="M12 140 C80 105 136 142 210 112 C296 77 340 126 508 84 L508 180 L12 180 Z" fill="#CDEFFF"/>
-            <rect x="62" y="62" width="54" height="84" rx="10" fill="#9ED2FF"/>
-            <rect x="132" y="42" width="46" height="104" rx="9" fill="#7FC1F7"/>
-            <rect x="202" y="78" width="58" height="68" rx="10" fill="#BFE6D1"/>
-            <path d="M310 144 L338 34 L366 144 Z" fill="#FF7DAA"/>
-            <path d="M323 91 H353 M317 116 H359" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-            <rect x="386" y="86" width="74" height="38" rx="18" fill="#FFFFFF"/>
-            <path d="M372 124 C400 150 444 150 472 124" fill="#56A6F1"/>
-            <circle cx="36" cy="132" r="20" fill="#6FCF97"/>
-            <rect x="32" y="132" width="8" height="28" rx="4" fill="#48A978"/>
-            <circle cx="486" cy="112" r="25" fill="#6FCF97"/>
-            <rect x="482" y="112" width="8" height="42" rx="4" fill="#48A978"/>
-            <g fill="#fff">
-              <rect x="75" y="78" width="8" height="8" rx="2"/><rect x="94" y="78" width="8" height="8" rx="2"/>
-              <rect x="75" y="100" width="8" height="8" rx="2"/><rect x="94" y="100" width="8" height="8" rx="2"/>
-              <rect x="145" y="62" width="8" height="8" rx="2"/><rect x="162" y="62" width="8" height="8" rx="2"/>
-              <rect x="145" y="84" width="8" height="8" rx="2"/><rect x="162" y="84" width="8" height="8" rx="2"/>
-            </g>
-            <circle cx="24" cy="36" r="8" fill="#FF7DAA"/>
-            <circle cx="268" cy="24" r="7" fill="#FFD600"/>
-            <circle cx="444" cy="42" r="6" fill="#56A6F1"/>
-            <path d="M27 84 q16 -18 32 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-          </svg>
-        </div>
-      </header>
       <aside class="selection-popup" aria-label="現在の表示条件" id="selectionPopup"></aside>
-      <section class="controls" aria-label="表示条件">
+      <section class="controls" aria-label="表示条件" id="overview">
         <fieldset class="metric-buttons">
           <legend>指標</legend>
           <button type="button" data-metric="total" class="active">人口</button>
@@ -220,6 +184,7 @@
       </section>
       <footer class="site-footer" id="about">
         <p>このサイトは、ほづみゆうきが作成しました。</p>
+        <span>データ期間：<strong id="dateRange">読み込み中</strong></span>
         <a class="source-link" href="https://www.city.chuo.lg.jp/kusei/gaiyou/toukeidate/jinkou/index.html">情報参照元：中央区webサイト</a>
       </footer>
     </main>
