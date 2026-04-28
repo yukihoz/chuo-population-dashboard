@@ -4,22 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>中央区人口ダッシュボード</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <main class="app">
       <aside class="sidebar" aria-label="ナビゲーション">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true">🏙️</div>
+          <div class="brand-mark" aria-hidden="true"><span class="material-symbols-rounded icon-blue">location_city</span></div>
           <strong>Chuo City<br>Population</strong>
         </div>
-        <nav class="side-nav">
-          <a class="active" href="#overview"><span>🏠</span>概要</a>
-          <a href="#population"><span>📈</span>人口</a>
-          <a href="#households"><span>🏘️</span>世帯</a>
-          <a href="#age"><span>🎈</span>年齢構成</a>
-          <a href="#rankingPanel"><span>👑</span>町別ランキング</a>
-          <a href="#about"><span>ℹ️</span>データについて</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="sideNav">
+          <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+          <span>メニュー</span>
+        </button>
+        <nav class="side-nav" id="sideNav">
+          <a class="active" href="#overview"><span class="material-symbols-rounded icon-orange" aria-hidden="true">dashboard</span>概要</a>
+          <a href="#population"><span class="material-symbols-rounded icon-blue" aria-hidden="true">monitoring</span>人口</a>
+          <a href="#households"><span class="material-symbols-rounded icon-pink" aria-hidden="true">home_work</span>世帯</a>
+          <a href="#age"><span class="material-symbols-rounded icon-green" aria-hidden="true">diversity_3</span>年齢構成</a>
+          <a href="#rankingPanel"><span class="material-symbols-rounded icon-orange" aria-hidden="true">leaderboard</span>町別ランキング</a>
+          <a href="#about"><span class="material-symbols-rounded icon-blue" aria-hidden="true">info</span>データについて</a>
         </nav>
         <div class="side-note">
           <div class="mini-town" aria-hidden="true">
@@ -130,24 +137,19 @@
 
       <section class="kpis" aria-label="主要指標" id="households">
         <article class="kpi-pop">
-          <i aria-hidden="true">👨‍👩‍👧</i>
+          <i aria-hidden="true"><span class="material-symbols-rounded icon-blue">groups</span></i>
           <span>人口</span>
           <strong id="latestTotal">-</strong>
         </article>
         <article class="kpi-home">
-          <i aria-hidden="true">🏠</i>
+          <i aria-hidden="true"><span class="material-symbols-rounded icon-pink">home</span></i>
           <span>世帯数</span>
           <strong id="latestHouseholds">-</strong>
         </article>
         <article class="kpi-family">
-          <i aria-hidden="true">🤝</i>
+          <i aria-hidden="true"><span class="material-symbols-rounded icon-green">family_restroom</span></i>
           <span>1世帯あたり人数</span>
           <strong id="latestPeoplePerHousehold">-</strong>
-        </article>
-        <article class="kpi-date">
-          <i aria-hidden="true">📅</i>
-          <span>データ更新月</span>
-          <strong id="latestDataDate">-</strong>
         </article>
       </section>
 

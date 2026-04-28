@@ -42,6 +42,39 @@ body::before {
   pointer-events: none;
 }
 
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 1, "wght" 600, "GRAD" 0, "opsz" 24;
+}
+
+.icon-blue {
+  color: var(--blue);
+}
+
+.icon-pink {
+  color: var(--pink);
+}
+
+.icon-green {
+  color: var(--green);
+}
+
+.icon-orange {
+  color: var(--orange);
+}
+
 .app {
   width: 100%;
   min-height: 100vh;
@@ -86,7 +119,14 @@ body::before {
   border-radius: 22px;
   background: var(--accent);
   box-shadow: 0 10px 18px rgba(255, 214, 0, 0.25);
-  font-size: 30px;
+}
+
+.brand-mark .material-symbols-rounded {
+  font-size: 38px;
+}
+
+.nav-toggle {
+  display: none;
 }
 
 .side-nav {
@@ -106,6 +146,11 @@ body::before {
   font-weight: 800;
   padding: 0 14px;
   text-decoration: none;
+}
+
+.side-nav .material-symbols-rounded {
+  flex: 0 0 auto;
+  font-size: 23px;
 }
 
 .side-nav a:hover,
@@ -505,7 +550,7 @@ input[type="search"] {
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
   margin-bottom: 22px;
 }
@@ -534,8 +579,11 @@ input[type="search"] {
   display: grid;
   place-items: center;
   border-radius: 20px;
-  font-size: 28px;
   font-style: normal;
+}
+
+.kpis i .material-symbols-rounded {
+  font-size: 34px;
 }
 
 .kpi-pop i {
@@ -548,10 +596,6 @@ input[type="search"] {
 
 .kpi-family i {
   background: rgba(111, 207, 151, 0.22);
-}
-
-.kpi-date i {
-  background: rgba(242, 153, 74, 0.2);
 }
 
 .kpis span {
@@ -952,29 +996,68 @@ svg {
   }
 
   .sidebar {
-    position: static;
+    position: sticky;
+    top: 8px;
+    z-index: 35;
     height: auto;
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
     margin: 12px 0;
     border: 1px solid var(--line);
     border-radius: 24px;
     padding: 14px;
   }
 
-  .brand,
   .side-note {
     display: none;
   }
 
-  .side-nav {
+  .brand {
     display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 2px;
+    justify-items: start;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    font-size: 13px;
   }
 
-  .side-nav a {
-    flex: 0 0 auto;
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 16px;
+  }
+
+  .brand-mark .material-symbols-rounded {
+    font-size: 27px;
+  }
+
+  .nav-toggle {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-self: end;
+    padding-inline: 12px;
+  }
+
+  .nav-toggle .material-symbols-rounded {
+    font-size: 22px;
+  }
+
+  .side-nav {
+    grid-column: 1 / -1;
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    overflow: visible;
+    padding: 8px 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sidebar.nav-open .side-nav {
+    display: grid;
   }
 
   .topbar {

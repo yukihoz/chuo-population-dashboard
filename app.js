@@ -115,6 +115,26 @@ function optionList(select, values, selected) {
   }
 }
 
+function initNavigation() {
+  const sidebar = document.querySelector(".sidebar");
+  const toggle = document.querySelector(".nav-toggle");
+  if (!sidebar || !toggle) return;
+  const icon = toggle.querySelector(".material-symbols-rounded");
+  const close = () => {
+    sidebar.classList.remove("nav-open");
+    toggle.setAttribute("aria-expanded", "false");
+    if (icon) icon.textContent = "menu";
+  };
+  toggle.addEventListener("click", () => {
+    const open = sidebar.classList.toggle("nav-open");
+    toggle.setAttribute("aria-expanded", String(open));
+    if (icon) icon.textContent = open ? "close" : "menu";
+  });
+  document.querySelectorAll(".side-nav a").forEach((link) => {
+    link.addEventListener("click", close);
+  });
+}
+
 function initControls() {
   const names = areaNamesInSourceOrder();
   state.areaNames = names;
@@ -410,7 +430,6 @@ function renderKpis() {
   $("latestTotal").textContent = active ? formatValue(active.total, "total") : "-";
   $("latestHouseholds").textContent = active ? formatValue(active.households, "households") : "-";
   $("latestPeoplePerHousehold").textContent = active ? formatValue(metrics.peoplePerHousehold.get(active), "peoplePerHousehold") : "-";
-  $("latestDataDate").textContent = formatDate(state.data.dateRange[1]);
 }
 
 function shiftYear(date, delta) {
@@ -806,6 +825,7 @@ async function boot() {
   state.baseDate = state.startDate;
   $("trendSlider").max = Math.max(0, state.dates.length - 1);
   $("dateRange").textContent = `${formatDate(raw.dateRange[0])} - ${formatDate(raw.dateRange[1])}`;
+  initNavigation();
   initControls();
   renderDateControls();
   renderBaseDateOptions();
