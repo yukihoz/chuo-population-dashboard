@@ -40,6 +40,10 @@ const state = {
 
 const fmt = new Intl.NumberFormat("ja-JP");
 const monthFmt = new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "short" });
+const REGION_NAMES = new Set(["京橋", "日本橋", "月島"]);
+const KYOBASHI_TOWNS = new Set(["京橋", "銀座", "新富", "入船", "湊", "明石町", "築地", "浜離宮庭園", "八丁堀", "新川"]);
+const NIHONBASHI_TOWNS = new Set(["日本橋", "日本橋本石町", "日本橋室町", "日本橋本町", "日本橋小舟町", "日本橋小伝馬町", "日本橋大伝馬町", "日本橋堀留町", "日本橋掘留町", "日本橋富沢町", "日本橋人形町", "日本橋小網町", "日本橋蛎殻町", "日本橋箱崎町", "日本橋馬喰町", "日本橋横山町", "東日本橋", "日本橋久松町", "日本橋浜町", "日本橋中洲", "日本橋茅場町", "日本橋兜町"]);
+const TSUKISHIMA_TOWNS = new Set(["佃", "月島", "勝どき", "豊海町", "晴海"]);
 
 function $(id) {
   return document.getElementById(id);
@@ -100,6 +104,45 @@ function addTownSeries(areaSeries, rows) {
   for (const [name, items] of byTown) {
     items.sort((a, b) => a.date.localeCompare(b.date));
     areaSeries.set(name, items);
+  }
+  return areaSeries;
+}
+
+function regionNameFor(row) {
+  if (row.town === "八重洲") return row.chome === 1 ? "日本橋" : "京橋";
+  if (KYOBASHI_TOWNS.has(row.town)) return "京橋";
+  if (NIHONBASHI_TOWNS.has(row.town)) return "日本橋";
+  if (TSUKISHIMA_TOWNS.has(row.town)) return "月島";
+  return null;
+}
+
+function addRegionSeries(areaSeries, rows) {
+  const byRegionDate = new Map();
+  for (const row of rows) {
+    const region = regionNameFor(row);
+    if (!region) continue;
+    const key = `${region}|${row.date}`;
+    if (!byRegionDate.has(key)) {
+      byRegionDate.set(key, {
+        date: row.date,
+        name: region,
+        households: 0,
+        male: 0,
+        female: 0,
+        total: 0,
+      });
+    }
+    const target = byRegionDate.get(key);
+    target.households += row.households;
+    target.male += row.male;
+    target.female += row.female;
+    target.total += row.total;
+  }
+  for (const region of REGION_NAMES) {
+    const items = [...byRegionDate.values()]
+      .filter((row) => row.name === region)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    areaSeries.set(region, items);
   }
   return areaSeries;
 }
@@ -580,7 +623,7 @@ function renderRanking() {
   const metric = metrics[state.metric];
   const rows = [];
   for (const [name, series] of state.data.areaSeries) {
-    if (name === "区全体" || !series.length) continue;
+    if (name === "区全体" || REGION_NAMES.has(name) || !series.length) continue;
     const start = series.find((row) => row.date === state.startDate);
     const end = series.find((row) => row.date === state.endDate);
     if (!start || !end) continue;
@@ -817,7 +860,7 @@ function render() {
 async function boot() {
   const response = await fetch("data/chuo_population.json");
   const raw = await response.json();
-  const areaSeries = addTownSeries(buildAreaSeries(raw.areaChome), raw.areaTown ?? []);
+  const areaSeries = addRegionSeries(addTownSeries(buildAreaSeries(raw.areaChome), raw.areaTown ?? []), raw.areaChome);
   state.data = {
     ...raw,
     areaSeries,

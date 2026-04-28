@@ -1,3 +1,27 @@
+@font-face {
+  font-family: "LINE Seed JP";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/line-seed-jp@latest/japanese-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "LINE Seed JP";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/line-seed-jp@latest/japanese-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "LINE Seed JP";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/line-seed-jp@latest/japanese-800-normal.woff2") format("woff2");
+}
+
 :root {
   color-scheme: light;
   --bg: #fff9e8;
@@ -16,7 +40,7 @@
   --middle: #ffd600;
   --senior: #ff7daa;
   --shadow: 0 12px 28px rgba(162, 119, 0, 0.12);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "LINE Seed JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * {
@@ -81,7 +105,7 @@ body::before {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
   gap: 24px;
-  padding: 0 28px 116px 0;
+  padding: 28px 28px 116px;
 }
 
 .app > :not(.sidebar) {
@@ -90,17 +114,18 @@ body::before {
 
 .sidebar {
   position: sticky;
-  top: 0;
+  top: 28px;
   grid-column: 1;
   grid-row: 1 / span 20;
-  height: 100vh;
+  height: calc(100vh - 56px);
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 22px;
-  border-right: 1px solid #f2e8c6;
+  border: 1px solid #f2e8c6;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.9);
   padding: 28px 18px;
-  box-shadow: 10px 0 28px rgba(162, 119, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .brand {
@@ -1006,7 +1031,7 @@ svg {
   .app {
     width: min(100% - 24px, 720px);
     display: block;
-    padding-right: 0;
+    padding: 0 0 116px;
   }
 
   .sidebar {
