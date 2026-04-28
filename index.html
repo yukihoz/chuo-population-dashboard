@@ -27,12 +27,6 @@
           <a href="#rankingPanel"><span class="material-symbols-rounded icon-orange" aria-hidden="true">leaderboard</span>町別ランキング</a>
           <a href="#about"><span class="material-symbols-rounded icon-blue" aria-hidden="true">info</span>データについて</a>
         </nav>
-        <div class="side-note">
-          <div class="mini-town" aria-hidden="true">
-            <span></span><span></span><span></span>
-          </div>
-          <p>データを見て、あなたのまちの変化を発見しよう！</p>
-        </div>
       </aside>
 
       <aside class="selection-popup" aria-label="現在の表示条件" id="selectionPopup"></aside>
@@ -61,18 +55,19 @@
             <option value="peoplePerHousehold">1世帯あたり人数</option>
           </select>
         </label>
-        <label>
-          地域
-          <select id="areaSelect"></select>
-        </label>
         <fieldset class="area-chip-field">
           <legend>地域を選ぶ</legend>
           <div class="area-chips" id="areaChips">
+            <button type="button" data-area-chip="区全体" class="active">全域</button>
             <button type="button" data-area-chip="京橋">京橋</button>
             <button type="button" data-area-chip="日本橋">日本橋</button>
             <button type="button" data-area-chip="月島">月島</button>
           </div>
         </fieldset>
+        <label>
+          地域
+          <select id="areaSelect"></select>
+        </label>
         <div class="compare-builder">
           <label for="compareSearch">比較</label>
           <div class="search-row">

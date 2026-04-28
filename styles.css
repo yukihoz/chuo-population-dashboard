@@ -333,8 +333,9 @@ legend {
 }
 
 .area-chip-field {
-  grid-column: 1 / -1;
-  order: 1;
+  grid-column: 3;
+  grid-row: 1;
+  align-self: start;
 }
 
 .area-chips {
@@ -369,8 +370,9 @@ label {
 
 .controls > label {
   align-self: start;
-  grid-column: 3;
-  grid-row: 1 / span 2;
+  grid-column: 1 / -1;
+  grid-row: auto;
+  order: 1;
 }
 
 .controls > label:not(.legacy-metric) {
@@ -525,8 +527,11 @@ input[type="search"] {
   min-height: 136px;
   display: grid;
   grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
   align-items: center;
+  align-content: center;
   column-gap: 16px;
+  row-gap: 4px;
   padding: 22px;
   min-width: 0;
   container-type: inline-size;
@@ -563,7 +568,7 @@ input[type="search"] {
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   min-width: 0;
 }
 
@@ -1078,6 +1083,11 @@ svg {
   }
 
   .controls > label {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .area-chip-field {
     grid-column: auto;
     grid-row: auto;
   }
