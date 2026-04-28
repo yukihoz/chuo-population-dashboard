@@ -47,6 +47,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -110,6 +114,15 @@ body::before {
 
 .app > :not(.sidebar) {
   grid-column: 2;
+}
+
+#overview,
+#households,
+#population,
+#age,
+#rankingPanel,
+#about {
+  scroll-margin-top: 32px;
 }
 
 .sidebar {
@@ -1069,6 +1082,15 @@ svg {
 
   .sidebar.nav-open {
     grid-template-rows: auto auto;
+  }
+
+  #overview,
+  #households,
+  #population,
+  #age,
+  #rankingPanel,
+  #about {
+    scroll-margin-top: 112px;
   }
 
   .side-note {

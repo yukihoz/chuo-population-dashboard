@@ -155,6 +155,16 @@ function initNavigation() {
   const toggle = document.querySelector(".nav-toggle");
   if (!sidebar || !toggle) return;
   const icon = toggle.querySelector(".material-symbols-rounded");
+  const scrollOffset = () => {
+    const mobile = window.matchMedia("(max-width: 900px)").matches;
+    if (!mobile) return 24;
+    return sidebar.offsetHeight + 18;
+  };
+  const setActiveLink = (link) => {
+    document.querySelectorAll(".side-nav a").forEach((item) => {
+      item.classList.toggle("active", item === link);
+    });
+  };
   const close = () => {
     sidebar.classList.remove("nav-open");
     toggle.setAttribute("aria-expanded", "false");
@@ -166,7 +176,21 @@ function initNavigation() {
     if (icon) icon.textContent = open ? "close" : "menu";
   });
   document.querySelectorAll(".side-nav a").forEach((link) => {
-    link.addEventListener("click", close);
+    link.addEventListener("click", (event) => {
+      const target = document.querySelector(link.getAttribute("href"));
+      if (!target) {
+        close();
+        return;
+      }
+      event.preventDefault();
+      close();
+      setActiveLink(link);
+      requestAnimationFrame(() => {
+        const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - scrollOffset());
+        window.scrollTo({ top, behavior: "smooth" });
+        history.replaceState(null, "", link.getAttribute("href"));
+      });
+    });
   });
 }
 
