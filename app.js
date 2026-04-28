@@ -59,6 +59,21 @@ function formatValue(value, metricKey = state.metric) {
   return `${fmt.format(Number(value).toFixed(digits))}${metric.unit}`;
 }
 
+function agePopulationTotal(date) {
+  const population = agePopulationTypes[state.agePopulation];
+  return state.data.age
+    .filter((row) => row.date === date)
+    .reduce((sum, row) => sum + (row[population.field] ?? row[population.fallback] ?? 0), 0);
+}
+
+function metricValue(row, metricKey = state.metric, areaName = row?.name) {
+  if (!row) return 0;
+  if (metricKey === "total" && areaName === "区全体" && state.agePopulation !== "total") {
+    return agePopulationTotal(row.date);
+  }
+  return metrics[metricKey].get(row);
+}
+
 function buildAreaSeries(rows) {
   const byArea = new Map();
   for (const row of rows) {
@@ -83,29 +98,6 @@ function buildAreaSeries(rows) {
     items.sort((a, b) => a.date.localeCompare(b.date));
   }
   return byArea;
-}
-
-function addTownSeries(areaSeries, rows) {
-  const byTown = new Map();
-  for (const row of rows) {
-    const key = row.town;
-    if (!key) continue;
-    if (!byTown.has(key)) byTown.set(key, []);
-    byTown.get(key).push({
-      date: row.date,
-      name: key,
-      households: row.households,
-      male: row.male,
-      female: row.female,
-      total: row.total,
-      sourceOrder: row.sourceOrder,
-    });
-  }
-  for (const [name, items] of byTown) {
-    items.sort((a, b) => a.date.localeCompare(b.date));
-    areaSeries.set(name, items);
-  }
-  return areaSeries;
 }
 
 function regionNameFor(row) {
@@ -243,8 +235,7 @@ function initControls() {
     button.addEventListener("click", () => {
       state.agePopulation = button.dataset.agePopulation;
       syncAgePopulationButtons();
-      renderSelectionPopup();
-      renderAgeChart();
+      render();
     });
   });
   $("baseDateSelect").addEventListener("change", (event) => {
@@ -459,8 +450,11 @@ function areaNamesInSourceOrder() {
       seen.add(row.name);
     }
   }
-  for (const name of state.data.areaSeries.keys()) {
-    if (!seen.has(name)) names.push(name);
+  for (const name of ["京橋", "日本橋", "月島"]) {
+    if (state.data.areaSeries.has(name) && !seen.has(name)) {
+      names.push(name);
+      seen.add(name);
+    }
   }
   return names;
 }
@@ -470,9 +464,9 @@ function renderKpis() {
   const dates = visibleDates();
   const activeDate = dates[state.trendIndex] ?? dates.at(-1);
   const active = series.find((row) => row.date === activeDate) ?? series.at(-1);
-  $("latestTotal").textContent = active ? formatValue(active.total, "total") : "-";
+  $("latestTotal").textContent = active ? formatValue(metricValue(active, "total", state.area), "total") : "-";
   $("latestHouseholds").textContent = active ? formatValue(active.households, "households") : "-";
-  $("latestPeoplePerHousehold").textContent = active ? formatValue(metrics.peoplePerHousehold.get(active), "peoplePerHousehold") : "-";
+  $("latestPeoplePerHousehold").textContent = active ? formatValue(metricValue(active, "peoplePerHousehold", state.area), "peoplePerHousehold") : "-";
 }
 
 function shiftYear(date, delta) {
@@ -505,7 +499,7 @@ function renderTrend() {
         .filter((row) => row.date >= state.startDate && row.date <= state.endDate)
         .map((row) => ({
           date: row.date,
-          value: metrics[state.metric].get(row),
+          value: metricValue(row, state.metric, name),
         })),
     }))
     .map((item) => ({
@@ -531,7 +525,7 @@ function renderTrendReadout(series, date) {
   const chips = series.map((item) => {
     const point = item.values.find((value) => value.date === date);
     const rawPoint = item.rawValues.find((value) => value.date === date);
-    const label = point ? formatTrendValue(point.value) : "-";
+    const label = point ? formatTrendValue(point.value, state.metric) : "-";
     const rawLabel = rawPoint && state.scale === "index" ? ` (${formatValue(rawPoint.value)})` : "";
     return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
   });
@@ -544,9 +538,9 @@ function toIndexValues(values, baseDate) {
   return values.map((row) => ({ ...row, value: (row.value / base) * 100 }));
 }
 
-function formatTrendValue(value) {
+function formatTrendValue(value, metricKey = state.metric) {
   if (state.scale === "index") return `${fmt.format(Number(value).toFixed(1))}`;
-  return formatValue(value);
+  return formatValue(value, metricKey);
 }
 
 function drawLineChart(svg, series, activeIndex) {
@@ -566,8 +560,8 @@ function drawLineChart(svg, series, activeIndex) {
   const min = Math.min(...all.map((d) => d.value));
   const max = Math.max(...all.map((d) => d.value));
   const pad = (max - min) * 0.08 || max * 0.08 || 1;
-  const yMin = Math.max(0, min - pad);
-  const yMax = max + pad;
+  const yMin = state.scale === "index" ? Math.min(100, min) : Math.max(0, min - pad);
+  const yMax = state.scale === "index" ? Math.max(max + (max - yMin) * 0.08, yMin + 5) : max + pad;
   const x = (date) => margin.left + (dates.indexOf(date) / Math.max(1, dates.length - 1)) * innerW;
   const y = (value) => margin.top + (1 - (value - yMin) / (yMax - yMin)) * innerH;
 
@@ -627,8 +621,8 @@ function renderRanking() {
     const start = series.find((row) => row.date === state.startDate);
     const end = series.find((row) => row.date === state.endDate);
     if (!start || !end) continue;
-    const startValue = metric.get(start);
-    const endValue = metric.get(end);
+    const startValue = metricValue(start, state.metric, name);
+    const endValue = metricValue(end, state.metric, name);
     const change = endValue - startValue;
     const rate = startValue ? (change / startValue) * 100 : null;
     rows.push({
@@ -729,7 +723,7 @@ function renderAgeReadout(series, date) {
   const chips = series.map((item) => {
     const point = item.values.find((value) => value.date === date);
     const rawPoint = item.rawValues.find((value) => value.date === date);
-    const label = point ? formatTrendValue(point.value) : "-";
+    const label = point ? formatTrendValue(point.value, "total") : "-";
     const rawLabel = rawPoint && state.scale === "index" ? ` (${formatValue(rawPoint.value, "total")})` : "";
     return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
   });
@@ -860,7 +854,7 @@ function render() {
 async function boot() {
   const response = await fetch("data/chuo_population.json");
   const raw = await response.json();
-  const areaSeries = addRegionSeries(addTownSeries(buildAreaSeries(raw.areaChome), raw.areaTown ?? []), raw.areaChome);
+  const areaSeries = addRegionSeries(buildAreaSeries(raw.areaChome), raw.areaChome);
   state.data = {
     ...raw,
     areaSeries,
