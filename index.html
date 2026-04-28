@@ -8,13 +8,61 @@
   </head>
   <body>
     <main class="app">
-      <header class="topbar">
-        <div>
+      <aside class="sidebar" aria-label="ナビゲーション">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">🏙️</div>
+          <strong>Chuo City<br>Population</strong>
+        </div>
+        <nav class="side-nav">
+          <a class="active" href="#overview"><span>🏠</span>概要</a>
+          <a href="#population"><span>📈</span>人口</a>
+          <a href="#households"><span>🏘️</span>世帯</a>
+          <a href="#age"><span>🎈</span>年齢構成</a>
+          <a href="#rankingPanel"><span>👑</span>町別ランキング</a>
+          <a href="#about"><span>ℹ️</span>データについて</a>
+        </nav>
+        <div class="side-note">
+          <div class="mini-town" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <p>データを見て、あなたのまちの変化を発見しよう！</p>
+        </div>
+      </aside>
+
+      <header class="topbar" id="overview">
+        <div class="hero-copy">
           <p class="eyebrow">Chuo City Population</p>
           <h1>中央区人口ダッシュボード</h1>
+          <p class="hero-lead">まちの今を、グラフでたのしく見てみよう！</p>
         </div>
-        <div class="source-note">
-          <span id="dateRange">読み込み中</span>
+        <div class="hero-meta">
+          <span>データ期間：<strong id="dateRange">読み込み中</strong></span>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 520 180" role="img">
+            <path d="M12 140 C80 105 136 142 210 112 C296 77 340 126 508 84 L508 180 L12 180 Z" fill="#CDEFFF"/>
+            <rect x="62" y="62" width="54" height="84" rx="10" fill="#9ED2FF"/>
+            <rect x="132" y="42" width="46" height="104" rx="9" fill="#7FC1F7"/>
+            <rect x="202" y="78" width="58" height="68" rx="10" fill="#BFE6D1"/>
+            <path d="M310 144 L338 34 L366 144 Z" fill="#FF7DAA"/>
+            <path d="M323 91 H353 M317 116 H359" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+            <rect x="386" y="86" width="74" height="38" rx="18" fill="#FFFFFF"/>
+            <path d="M372 124 C400 150 444 150 472 124" fill="#56A6F1"/>
+            <circle cx="36" cy="132" r="20" fill="#6FCF97"/>
+            <rect x="32" y="132" width="8" height="28" rx="4" fill="#48A978"/>
+            <circle cx="486" cy="112" r="25" fill="#6FCF97"/>
+            <rect x="482" y="112" width="8" height="42" rx="4" fill="#48A978"/>
+            <g fill="#fff">
+              <rect x="75" y="78" width="8" height="8" rx="2"/><rect x="94" y="78" width="8" height="8" rx="2"/>
+              <rect x="75" y="100" width="8" height="8" rx="2"/><rect x="94" y="100" width="8" height="8" rx="2"/>
+              <rect x="145" y="62" width="8" height="8" rx="2"/><rect x="162" y="62" width="8" height="8" rx="2"/>
+              <rect x="145" y="84" width="8" height="8" rx="2"/><rect x="162" y="84" width="8" height="8" rx="2"/>
+            </g>
+            <circle cx="24" cy="36" r="8" fill="#FF7DAA"/>
+            <circle cx="268" cy="24" r="7" fill="#FFD600"/>
+            <circle cx="444" cy="42" r="6" fill="#56A6F1"/>
+            <path d="M27 84 q16 -18 32 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+          </svg>
         </div>
       </header>
       <aside class="selection-popup" aria-label="現在の表示条件" id="selectionPopup"></aside>
@@ -47,6 +95,17 @@
           地域
           <select id="areaSelect"></select>
         </label>
+        <fieldset class="area-chip-field">
+          <legend>地域を選ぶ</legend>
+          <div class="area-chips" id="areaChips">
+            <button type="button" data-area-chip="区全体" class="active">中央区全体</button>
+            <button type="button" data-area-chip="日本橋">日本橋</button>
+            <button type="button" data-area-chip="京橋">京橋</button>
+            <button type="button" data-area-chip="月島">月島</button>
+            <button type="button" data-area-chip="晴海">晴海</button>
+            <button type="button" data-area-chip="築地">築地</button>
+          </div>
+        </fieldset>
         <div class="compare-builder">
           <label for="compareSearch">比較</label>
           <div class="search-row">
@@ -69,23 +128,31 @@
         </fieldset>
       </section>
 
-      <section class="kpis" aria-label="主要指標">
-        <article>
-          <span>選択エリアの人口</span>
+      <section class="kpis" aria-label="主要指標" id="households">
+        <article class="kpi-pop">
+          <i aria-hidden="true">👨‍👩‍👧</i>
+          <span>人口</span>
           <strong id="latestTotal">-</strong>
         </article>
-        <article>
-          <span>選択エリアの世帯数</span>
+        <article class="kpi-home">
+          <i aria-hidden="true">🏠</i>
+          <span>世帯数</span>
           <strong id="latestHouseholds">-</strong>
         </article>
-        <article>
+        <article class="kpi-family">
+          <i aria-hidden="true">🤝</i>
           <span>1世帯あたり人数</span>
           <strong id="latestPeoplePerHousehold">-</strong>
+        </article>
+        <article class="kpi-date">
+          <i aria-hidden="true">📅</i>
+          <span>データ更新月</span>
+          <strong id="latestDataDate">-</strong>
         </article>
       </section>
 
       <section class="layout">
-        <article class="panel wide">
+        <article class="panel wide" id="population">
           <div class="panel-head">
             <h2 id="trendTitle">推移</h2>
             <div class="trend-tools">
@@ -111,7 +178,7 @@
           </div>
         </article>
 
-        <article class="panel age-panel">
+        <article class="panel age-panel" id="age">
           <div class="panel-head">
             <h2>年齢3区分の推移</h2>
             <div class="trend-tools">
@@ -136,7 +203,7 @@
           </div>
         </article>
 
-        <article class="panel">
+        <article class="panel" id="rankingPanel">
           <div class="panel-head">
             <h2>町別ランキング</h2>
             <div class="rank-buttons" aria-label="ランキング種別">
@@ -149,7 +216,7 @@
           <ol class="ranking" id="ranking"></ol>
         </article>
       </section>
-      <footer class="site-footer">
+      <footer class="site-footer" id="about">
         <p>このサイトは、ほづみゆうきが作成しました。</p>
         <a class="source-link" href="https://www.city.chuo.lg.jp/kusei/gaiyou/toukeidate/jinkou/index.html">情報参照元：中央区webサイト</a>
       </footer>

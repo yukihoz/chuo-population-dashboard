@@ -1,4 +1,4 @@
-const colors = ["#705b00", "#38b6ff", "#8c52ff", "#b08900", "#5d8f27", "#2a7ca8"];
+const colors = ["#56a6f1", "#ff7daa", "#6fcf97", "#f2994a", "#8c52ff", "#ff5757"];
 const metrics = {
   total: { label: "人口", unit: "人", get: (d) => d.total },
   households: { label: "世帯数", unit: "世帯", get: (d) => d.households },
@@ -81,6 +81,29 @@ function buildAreaSeries(rows) {
   return byArea;
 }
 
+function addTownSeries(areaSeries, rows) {
+  const byTown = new Map();
+  for (const row of rows) {
+    const key = row.town;
+    if (!key) continue;
+    if (!byTown.has(key)) byTown.set(key, []);
+    byTown.get(key).push({
+      date: row.date,
+      name: key,
+      households: row.households,
+      male: row.male,
+      female: row.female,
+      total: row.total,
+      sourceOrder: row.sourceOrder,
+    });
+  }
+  for (const [name, items] of byTown) {
+    items.sort((a, b) => a.date.localeCompare(b.date));
+    areaSeries.set(name, items);
+  }
+  return areaSeries;
+}
+
 function optionList(select, values, selected) {
   select.innerHTML = "";
   for (const value of values) {
@@ -113,9 +136,23 @@ function initControls() {
   $("areaSelect").addEventListener("change", (event) => {
     state.area = event.target.value;
     state.compare = state.compare.filter((name) => name !== state.area);
+    syncAreaChips();
     renderCompareChips();
     renderSuggestions();
     render();
+  });
+  document.querySelectorAll("[data-area-chip]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const area = button.dataset.areaChip;
+      if (!state.data.areaSeries.has(area)) return;
+      state.area = area;
+      $("areaSelect").value = state.area;
+      state.compare = state.compare.filter((name) => name !== state.area);
+      syncAreaChips();
+      renderCompareChips();
+      renderSuggestions();
+      render();
+    });
   });
   $("compareSearch").addEventListener("input", renderSuggestions);
   $("compareSearch").addEventListener("focus", renderSuggestions);
@@ -207,6 +244,7 @@ function initControls() {
   syncScaleButtons();
   syncRankButtons();
   syncAgePopulationButtons();
+  syncAreaChips();
 }
 
 function syncMetricButtons() {
@@ -230,6 +268,12 @@ function syncRankButtons() {
 function syncAgePopulationButtons() {
   document.querySelectorAll("[data-age-population]").forEach((button) => {
     button.classList.toggle("active", button.dataset.agePopulation === state.agePopulation);
+  });
+}
+
+function syncAreaChips() {
+  document.querySelectorAll("[data-area-chip]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.areaChip === state.area);
   });
 }
 
@@ -366,6 +410,7 @@ function renderKpis() {
   $("latestTotal").textContent = active ? formatValue(active.total, "total") : "-";
   $("latestHouseholds").textContent = active ? formatValue(active.households, "households") : "-";
   $("latestPeoplePerHousehold").textContent = active ? formatValue(metrics.peoplePerHousehold.get(active), "peoplePerHousehold") : "-";
+  $("latestDataDate").textContent = formatDate(state.data.dateRange[1]);
 }
 
 function shiftYear(date, delta) {
@@ -586,9 +631,9 @@ function syncAgeControls() {
 function buildAgeGroupSeries(dates) {
   const population = agePopulationTypes[state.agePopulation];
   const groups = [
-    { name: "年少人口", color: "#7ed957", test: (age) => age <= 14 },
-    { name: "生産年齢人口", color: "#38b6ff", test: (age) => age >= 15 && age <= 64 },
-    { name: "老年人口", color: "#8c52ff", test: (age) => age >= 65 },
+    { name: "年少人口", color: "#56A6F1", test: (age) => age <= 14 },
+    { name: "生産年齢人口", color: "#FFD600", test: (age) => age >= 15 && age <= 64 },
+    { name: "老年人口", color: "#FF7DAA", test: (age) => age >= 65 },
   ];
   const rowsByDate = new Map();
   for (const row of state.data.age) {
@@ -749,9 +794,10 @@ function render() {
 async function boot() {
   const response = await fetch("data/chuo_population.json");
   const raw = await response.json();
+  const areaSeries = addTownSeries(buildAreaSeries(raw.areaChome), raw.areaTown ?? []);
   state.data = {
     ...raw,
-    areaSeries: buildAreaSeries(raw.areaChome),
+    areaSeries,
   };
   state.dates = [...new Set(raw.areaChome.map((row) => row.date))].sort();
   state.startDate = defaultStartDate();
