@@ -876,7 +876,7 @@ function render() {
 }
 
 async function boot() {
-  const response = await fetch("data/chuo_population.json");
+  const response = await fetch("data/chuo_population.json?v=20260508");
   const raw = await response.json();
   const areaSeries = addRegionSeries(buildAreaSeries(raw.areaChome), raw.areaChome);
   state.data = {
