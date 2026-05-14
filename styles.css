@@ -120,6 +120,7 @@ body::before {
 #households,
 #population,
 #age,
+#ageRange,
 #rankingPanel,
 #about {
   scroll-margin-top: 32px;
@@ -439,7 +440,8 @@ select[multiple] {
   min-height: 112px;
 }
 
-input[type="search"] {
+input[type="search"],
+input[type="number"] {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
@@ -448,6 +450,10 @@ input[type="search"] {
   color: var(--ink);
   font: inherit;
   padding: 8px 10px;
+}
+
+input[type="number"] {
+  max-width: 90px;
 }
 
 .compare-builder {
@@ -661,6 +667,24 @@ input[type="search"] {
   justify-content: end;
   align-items: center;
   gap: 10px;
+}
+
+.age-range-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: end;
+  gap: 8px;
+}
+
+.age-range-controls label {
+  min-width: 88px;
+  gap: 5px;
+}
+
+.age-range-controls span {
+  color: var(--muted);
+  line-height: 48px;
 }
 
 .scale-toggle {
@@ -1101,6 +1125,7 @@ svg {
   #households,
   #population,
   #age,
+  #ageRange,
   #rankingPanel,
   #about {
     scroll-margin-top: 112px;
@@ -1209,6 +1234,7 @@ svg {
 
   .wide,
   .age-panel,
+  .age-range-panel,
   #rankingPanel {
     grid-column: auto;
   }
@@ -1217,6 +1243,10 @@ svg {
   .timeline.compact {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .age-range-controls {
+    justify-content: start;
   }
 
   .timeline {
@@ -1320,11 +1350,16 @@ svg {
   }
 
   select,
-  input[type="search"] {
+  input[type="search"],
+  input[type="number"] {
     min-height: 42px;
     border-radius: 14px;
     font-size: clamp(17px, 4.8vw, 20px);
     padding: 7px 10px;
+  }
+
+  input[type="number"] {
+    max-width: 86px;
   }
 
   .period-filter {

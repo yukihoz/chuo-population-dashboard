@@ -34,8 +34,12 @@ const state = {
   trendIndex: 0,
   ageDates: [],
   ageIndex: 0,
+  ageRangeStart: 0,
+  ageRangeEnd: 14,
+  ageRangeIndex: 0,
   trendTimer: null,
   ageTimer: null,
+  ageRangeTimer: null,
 };
 
 const fmt = new Intl.NumberFormat("ja-JP");
@@ -253,6 +257,7 @@ function initControls() {
       renderBaseDateControl();
       renderTrend();
       renderAgeChart();
+      renderAgeRangeChart();
     });
   });
   document.querySelectorAll("[data-age-population]").forEach((button) => {
@@ -267,6 +272,7 @@ function initControls() {
     $("ageBaseDateSelect").value = state.baseDate;
     renderTrend();
     renderAgeChart();
+    renderAgeRangeChart();
   });
   $("ageBaseDateSelect").addEventListener("change", (event) => {
     state.baseDate = event.target.value;
@@ -274,6 +280,7 @@ function initControls() {
     $("ageBaseDateSelect").value = state.baseDate;
     renderTrend();
     renderAgeChart();
+    renderAgeRangeChart();
   });
   $("startDateSelect").addEventListener("change", (event) => {
     state.startDate = event.target.value;
@@ -286,6 +293,8 @@ function initControls() {
     renderSelectionPopup();
     syncAgeControls();
     renderAgeChart();
+    syncAgeRangeControls();
+    renderAgeRangeChart();
   });
   $("endDateSelect").addEventListener("change", (event) => {
     state.endDate = event.target.value;
@@ -298,6 +307,8 @@ function initControls() {
     renderSelectionPopup();
     syncAgeControls();
     renderAgeChart();
+    syncAgeRangeControls();
+    renderAgeRangeChart();
   });
   document.querySelectorAll("[data-rank-mode]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -318,6 +329,18 @@ function initControls() {
     renderAgeChart();
   });
   $("agePlay").addEventListener("click", toggleAgePlayback);
+  $("ageRangeSlider").addEventListener("input", (event) => {
+    state.ageRangeIndex = Number(event.target.value);
+    syncAgeRangeControls();
+    renderAgeRangeChart();
+  });
+  $("ageRangePlay").addEventListener("click", toggleAgeRangePlayback);
+  for (const id of ["ageRangeStart", "ageRangeEnd"]) {
+    $(id).addEventListener("input", () => {
+      syncAgeRangeInputs();
+      renderAgeRangeChart();
+    });
+  }
   renderCompareChips();
   syncScaleButtons();
   syncRankButtons();
@@ -388,6 +411,7 @@ function visibleDates() {
 function resetTrendToPeriodEnd() {
   state.trendIndex = Math.max(0, visibleDates().length - 1);
   state.ageIndex = Math.max(0, visibleDates().length - 1);
+  state.ageRangeIndex = Math.max(0, visibleDates().length - 1);
 }
 
 function renderDateControls() {
@@ -538,7 +562,12 @@ function renderTrend() {
   $("trendSlider").value = state.trendIndex;
   $("trendDateLabel").textContent = activeDate ? formatDate(activeDate) : "-";
   renderTrendReadout(series, activeDate);
-  drawLineChart($("trendChart"), series, state.trendIndex);
+  drawLineChart($("trendChart"), series, state.trendIndex, (index) => {
+    state.trendIndex = index;
+    stopTrendPlayback();
+    renderKpis();
+    renderTrend();
+  });
 }
 
 function renderTrendReadout(series, date) {
@@ -567,7 +596,7 @@ function formatTrendValue(value, metricKey = state.metric) {
   return formatValue(value, metricKey);
 }
 
-function drawLineChart(svg, series, activeIndex) {
+function drawLineChart(svg, series, activeIndex, onPickIndex) {
   const width = svg.clientWidth || 900;
   const height = svg.clientHeight || 500;
   const margin = { top: 18, right: 22, bottom: 42, left: 70 };
@@ -629,10 +658,7 @@ function drawLineChart(svg, series, activeIndex) {
   hit.addEventListener("click", (event) => {
     const rect = svg.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left - margin.left) / innerW));
-    state.trendIndex = Math.round(ratio * (dates.length - 1));
-    stopTrendPlayback();
-    renderKpis();
-    renderTrend();
+    onPickIndex?.(Math.round(ratio * (dates.length - 1)));
   });
   svg.append(hit);
 }
@@ -683,7 +709,9 @@ function renderRanking() {
 function renderAgeOptions() {
   state.ageDates = [...new Set(state.data.age.map((row) => row.date))].sort();
   state.ageIndex = visibleDates().length - 1;
+  state.ageRangeIndex = visibleDates().length - 1;
   syncAgeControls();
+  syncAgeRangeControls();
 }
 
 function renderAgeChart() {
@@ -698,7 +726,12 @@ function renderAgeChart() {
   document.querySelector(".age-panel h2").textContent = `年齢3区分の推移（${agePopulationTypes[state.agePopulation].label}）${state.scale === "index" ? `（${formatDate(state.baseDate)}=100）` : ""}`;
   $("ageDateLabel").textContent = activeDate ? formatDate(activeDate) : "-";
   renderAgeReadout(displaySeries, activeDate);
-  drawLineChart($("ageChart"), displaySeries, state.ageIndex);
+  drawLineChart($("ageChart"), displaySeries, state.ageIndex, (index) => {
+    state.ageIndex = index;
+    stopAgePlayback();
+    syncAgeControls();
+    renderAgeChart();
+  });
 }
 
 function syncAgeControls() {
@@ -752,6 +785,92 @@ function renderAgeReadout(series, date) {
     return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
   });
   $("ageReadout").innerHTML = chips.join("");
+}
+
+function syncAgeRangeInputs() {
+  const startInput = $("ageRangeStart");
+  const endInput = $("ageRangeEnd");
+  const start = clampAge(startInput.value);
+  const end = clampAge(endInput.value);
+  state.ageRangeStart = Math.min(start, end);
+  state.ageRangeEnd = Math.max(start, end);
+}
+
+function clampAge(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.min(120, Math.max(0, Math.round(number)));
+}
+
+function renderAgeRangeChart() {
+  const dates = visibleDates();
+  if (state.ageRangeIndex > dates.length - 1) state.ageRangeIndex = Math.max(0, dates.length - 1);
+  const activeDate = dates[state.ageRangeIndex] ?? dates.at(-1);
+  const series = buildAgeRangeSeries(dates);
+  const displaySeries = series.map((item) => ({
+    ...item,
+    values: state.scale === "index" ? toIndexValues(item.rawValues, state.baseDate) : item.rawValues,
+  }));
+  const rangeLabel = ageRangeLabel();
+  $("ageRangeTitle").textContent = `${rangeLabel}の推移（${agePopulationTypes[state.agePopulation].label}）${state.scale === "index" ? `（${formatDate(state.baseDate)}=100）` : ""}`;
+  $("ageRangeDateLabel").textContent = activeDate ? formatDate(activeDate) : "-";
+  renderAgeRangeReadout(displaySeries, activeDate);
+  drawLineChart($("ageRangeChart"), displaySeries, state.ageRangeIndex, (index) => {
+    state.ageRangeIndex = index;
+    stopAgeRangePlayback();
+    syncAgeRangeControls();
+    renderAgeRangeChart();
+  });
+}
+
+function syncAgeRangeControls() {
+  const dates = visibleDates();
+  const date = dates[state.ageRangeIndex] ?? dates.at(-1);
+  $("ageRangeSlider").max = Math.max(0, dates.length - 1);
+  $("ageRangeSlider").value = state.ageRangeIndex;
+  $("ageRangeDateLabel").textContent = date ? formatDate(date) : "-";
+}
+
+function buildAgeRangeSeries(dates) {
+  const population = agePopulationTypes[state.agePopulation];
+  const rowsByDate = new Map();
+  for (const row of state.data.age) {
+    if (dateInPeriod(row.date)) {
+      if (!rowsByDate.has(row.date)) rowsByDate.set(row.date, []);
+      rowsByDate.get(row.date).push(row);
+    }
+  }
+  return [{
+    name: ageRangeLabel(),
+    color: "#6fcf97",
+    rawValues: dates.map((date) => ({
+      date,
+      value: (rowsByDate.get(date) ?? [])
+        .filter((row) => row.age >= state.ageRangeStart && row.age <= state.ageRangeEnd)
+        .reduce((sum, row) => sum + (row[population.field] ?? row[population.fallback] ?? 0), 0),
+    })),
+  }];
+}
+
+function ageRangeLabel() {
+  return state.ageRangeStart === state.ageRangeEnd
+    ? `${state.ageRangeStart}歳`
+    : `${state.ageRangeStart}-${state.ageRangeEnd}歳`;
+}
+
+function renderAgeRangeReadout(series, date) {
+  if (!date) {
+    $("ageRangeReadout").innerHTML = "";
+    return;
+  }
+  const chips = series.map((item) => {
+    const point = item.values.find((value) => value.date === date);
+    const rawPoint = item.rawValues.find((value) => value.date === date);
+    const label = point ? formatTrendValue(point.value, "total") : "-";
+    const rawLabel = rawPoint && state.scale === "index" ? ` (${formatValue(rawPoint.value, "total")})` : "";
+    return `<span><i style="background:${item.color}"></i>${item.name}: ${label}${rawLabel}</span>`;
+  });
+  $("ageRangeReadout").innerHTML = chips.join("");
 }
 
 function line(svg, x1, y1, x2, y2, className) {
@@ -848,6 +967,37 @@ function stopAgePlayback() {
   $("agePlay").textContent = "再生";
 }
 
+function toggleAgeRangePlayback() {
+  if (state.ageRangeTimer) {
+    stopAgeRangePlayback();
+    return;
+  }
+  const dates = visibleDates();
+  if (state.ageRangeIndex >= dates.length - 1) {
+    state.ageRangeIndex = 0;
+    syncAgeRangeControls();
+    renderAgeRangeChart();
+  }
+  $("ageRangePlay").textContent = "停止";
+  state.ageRangeTimer = window.setInterval(() => {
+    const dates = visibleDates();
+    if (state.ageRangeIndex >= dates.length - 1) {
+      stopAgeRangePlayback();
+      return;
+    }
+    state.ageRangeIndex += 1;
+    syncAgeRangeControls();
+    renderAgeRangeChart();
+  }, 170);
+}
+
+function stopAgeRangePlayback() {
+  if (!state.ageRangeTimer) return;
+  window.clearInterval(state.ageRangeTimer);
+  state.ageRangeTimer = null;
+  $("ageRangePlay").textContent = "再生";
+}
+
 function compact(value) {
   if (state.scale === "index") return fmt.format(Number(value).toFixed(1));
   if (Math.abs(value) >= 10000) return `${Math.round(value / 1000) / 10}万`;
@@ -872,6 +1022,7 @@ function render() {
   renderTrend();
   renderRanking();
   renderAgeChart();
+  renderAgeRangeChart();
   renderSelectionPopup();
 }
 

@@ -162,6 +162,32 @@
           <p class="data-note">※ 年齢別データの「総数」は、2016年12月までは日本人のみ、2017年1月以降は日本人と外国人の合計です。</p>
         </article>
 
+        <article class="panel age-range-panel" id="ageRange">
+          <div class="panel-head">
+            <h2 id="ageRangeTitle">指定年齢の推移</h2>
+            <div class="age-range-controls" aria-label="年齢範囲">
+              <label>
+                開始年齢
+                <input id="ageRangeStart" type="number" min="0" max="120" step="1" value="0">
+              </label>
+              <span aria-hidden="true">-</span>
+              <label>
+                終了年齢
+                <input id="ageRangeEnd" type="number" min="0" max="120" step="1" value="14">
+              </label>
+            </div>
+          </div>
+          <div class="timeline">
+            <button id="ageRangePlay" type="button">再生</button>
+            <input id="ageRangeSlider" type="range" min="0" max="0" value="0">
+            <strong id="ageRangeDateLabel">-</strong>
+          </div>
+          <div class="readout" id="ageRangeReadout"></div>
+          <div class="chart-wrap">
+            <svg id="ageRangeChart" role="img" aria-label="指定年齢の人口推移グラフ"></svg>
+          </div>
+        </article>
+
         <article class="panel" id="rankingPanel">
           <div class="panel-head">
             <h2>町別ランキング</h2>
