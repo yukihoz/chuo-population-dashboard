@@ -790,8 +790,16 @@ function renderAgeReadout(series, date) {
 function syncAgeRangeInputs() {
   const startInput = $("ageRangeStart");
   const endInput = $("ageRangeEnd");
-  const start = clampAge(startInput.value);
-  const end = clampAge(endInput.value);
+  const startValue = startInput.value.trim();
+  const endValue = endInput.value.trim();
+  if (!startValue || !endValue) {
+    const age = clampAge(startValue || endValue);
+    state.ageRangeStart = age;
+    state.ageRangeEnd = age;
+    return;
+  }
+  const start = clampAge(startValue);
+  const end = clampAge(endValue);
   state.ageRangeStart = Math.min(start, end);
   state.ageRangeEnd = Math.max(start, end);
 }
